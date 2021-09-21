@@ -12,11 +12,13 @@ from numpy import load
 
 # driver
 def Simulation(maindir,ua,ub,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt):
-    #create a random directory within maindir
-    now = datetime.now()
-    timestamp = now.strftime("%d%m%y_%H%M%S")    
-    path=os.path.join(maindir,timestamp)
-    path=path+'_'+str(multiprocessing.current_process())
+    arry=np.abs(ub)
+    iy,ix=np.where(arry==np.amax(arry))
+    ix=ix[0]
+    iy=iy[0]
+    foldname='x_'+str(x[ix])+'_y_'+str(y[iy])
+    path=os.path.join(maindir,foldname)
+    path=path#+'_'+str(multiprocessing.current_process())
     os.mkdir(path)
     
     # taking initial density perturbation to be zero
