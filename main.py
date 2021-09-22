@@ -6,10 +6,10 @@ from datetime import datetime
 from multiprocessing import Pool
 import solver
 import driver
-from init_angdel import *
+from init_wd import *
 
 if __name__ == '__main__':
-    pool = Pool(os.cpu_count())
+    pool = Pool(1)#s.cpu_count())
     print('Starting time:',datetime.now())
     pool.starmap(driver.Simulation,datainputs)
     pool.close()
