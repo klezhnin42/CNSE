@@ -40,8 +40,11 @@ Vfrs = wpw1**2/4; # coupling const in envelope eqns
 #Wfrs = wpw1*(1-np.cos(theta/180*np.pi))*(1-wpw1**2); # coupling const in density eqn
 Es = 0.0; # 3/16*wpw1^2;
 cvph1=np.sqrt(1-wpw1**2);
-cvph2=(1-wpw1)*np.sqrt(1-wpw1**2*(1-wpw1)**2);
+cvph2=np.sqrt(1-wpw1**2/(1+wpw1)**2);
+k1=np.sqrt(1-wpw1**2)
+k2=np.sqrt((1+wpw1)**2-wpw1**2)
 amp=0.2
+
 
 #definition of two laser envelopes
 
@@ -79,7 +82,7 @@ cpls = list(itertools.product(rbini, angleb))
 for rb,phib in cpls:   
     vgb  = [np.cos(phib/180*np.pi), -np.sin(phib/180*np.pi)]; # group velocity of pulses, in c
     theta=np.abs(anglea-phib);  #oblique angle wrt x axis
-    Wfrs = wpw1*(1+np.cos(theta/180*np.pi))*(1-wpw1**2); # coupling const in density eqn
+    Wfrs = 1.0/wpw1*(k1**2+k2**2-2.0*k1*k2*np.cos(theta/180*np.pi)) # coupling const in density eqn
     xbini = -rb*np.cos(phib/180*np.pi) ;         # initial position, with respect to focus
     ybini = rb*np.sin(phib/180*np.pi)  ;
     ybfocus = -100;        # distance to focus transversly
