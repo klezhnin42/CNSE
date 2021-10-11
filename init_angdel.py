@@ -4,8 +4,8 @@
 import numpy as np
 import itertools 
 
-Lx = 600/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
-Ly = 600/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
+Lx = 800/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
+Ly = 800/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
 Nx = 2*64; # number of harmonics
 Ny = 2*64; # number of harmonics
 dx = Lx/Nx;
@@ -22,7 +22,7 @@ ky = np.concatenate([np.linspace(0,Ny/2-1,int(Ny/2-1)+1),[0],np.linspace(-Ny/2+1
 [k2xm,k2ym]=np.meshgrid(kx**2,ky**2);
 [kxm,kym]=np.meshgrid(kx,ky);
 
-maindir='/Users/kirill/NSEruns/angscan/';
+maindir='./';
 
 # initial conditions of the laser & constants are defined
 
@@ -34,7 +34,7 @@ vga  = [np.cos(anglea/180*np.pi), -np.sin(anglea/180*np.pi)];  # group velocity 
 
 #coupling constants calculation
 #theta=np.abs(anglea-angleb);  #oblique angle wrt x axis
-wpw1=0.4; # plasma omega to w1
+wpw1=0.2; # plasma omega to w1
 w1w2=1;   # ratio of frequencies
 Vfrs = wpw1**2/4; # coupling const in envelope eqns
 #Wfrs = wpw1*(1-np.cos(theta/180*np.pi))*(1-wpw1**2); # coupling const in density eqn
@@ -61,6 +61,8 @@ qaini = qaini+xxa
 
 ua0 = amp*np.exp(-1j*(yya)**2/(2*qaini))*np.exp(-(xxa)**2/(dura**2))
 
+ua0energy=abs(sum(sum(ua0*np.conjugate(ua0))))
+
 # pump conditions
 ub0s=[]
 vgbs=[]
@@ -69,24 +71,28 @@ couplings=[]
 durb = 50;
 w0b = 20;
 zRb = np.pi*w0b**2 ;              # Rayleigh range
-rbini = np.linspace(50,150,3);
-angleb = np.linspace(10,90,6);
+rbini = np.linspace(50,350,50);
+angleb = np.linspace(10,90,50);
 
 cpls = list(itertools.product(rbini, angleb))
 
 for rb,phib in cpls:   
     vgb  = [np.cos(phib/180*np.pi), -np.sin(phib/180*np.pi)]; # group velocity of pulses, in c
     theta=np.abs(anglea-phib);  #oblique angle wrt x axis
-    Wfrs = wpw1*(1-np.cos(theta/180*np.pi))*(1-wpw1**2); # coupling const in density eqn
+    Wfrs = wpw1*(1+np.cos(theta/180*np.pi))*(1-wpw1**2); # coupling const in density eqn
     xbini = -rb*np.cos(phib/180*np.pi) ;         # initial position, with respect to focus
     ybini = rb*np.sin(phib/180*np.pi)  ;
     ybfocus = -100;        # distance to focus transversly
     qbini = -ybfocus+1j*zRb ; # Complex parameter of the beam
     xxb = (xx-xbini)*np.cos(phib/180*np.pi)-(yy-ybini)*np.sin(phib/180*np.pi);
     yyb = (xx-xbini)*np.sin(phib/180*np.pi)+(yy-ybini)*np.cos(phib/180*np.pi);
-    ub0 = amp*np.exp(-1j*(yyb**2)/(2*qbini))*np.exp(-(xxb)**2/(durb**2))
+    alpha=np.exp(-1j*(yyb**2)/(2*qbini))*np.exp(-(xxb)**2/(durb**2))
+    alphasum = abs(sum(sum(alpha*np.conjugate(alpha))))
+    ampb = np.sqrt(ua0energy/alphasum)
+    ub0 = ampb*np.exp(-1j*(yyb**2)/(2*qbini))*np.exp(-(xxb)**2/(durb**2))
+#    ub0 = amp*np.exp(-1j*(yyb**2)/(2*qbini))*np.exp(-(xxb)**2/(durb**2))
     ub0s.append(ub0)
     vgbs.append(vgb)
     couplings.append(Vfrs*Wfrs)
 
-datainputs=[[maindir,ua0,ub0,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt] for ub0,vgb,coupling in zip(ub0s,vgbs,couplings)]
+datainputs=[[maindir,cpl,ua0,ub0,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt] for cpl,ub0,vgb,coupling in zip(cpls,ub0s,vgbs,couplings)]

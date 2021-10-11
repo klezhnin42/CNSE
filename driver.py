@@ -11,16 +11,18 @@ from numpy import save
 from numpy import load
 
 # driver
-def Simulation(maindir,ua,ub,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt):
-    arry=np.abs(ub)
-    iy,ix=np.where(arry==np.amax(arry))
-    ix=ix[0]
-    iy=iy[0]
-    foldname='x_'+str(x[ix])+'_y_'+str(y[iy])
-    path=os.path.join(maindir,foldname)
-    path=path#+'_'+str(multiprocessing.current_process())
-    os.mkdir(path)
-    
+def Simulation(maindir,params,ua,ub,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt):
+    try:
+        rb,phib=params[0],params[1]
+        foldname='rb_'+str(rb)+'_phib_'+str(phib)
+        path=os.path.join(maindir,foldname)
+        os.mkdir(path)
+    except:
+        now = datetime.now()
+        timestamp = now.strftime("%d%m%y_%H%M%S")
+        foldname = timestamp + str(multiprocessing.current_process())
+        path=os.path.join(maindir,foldname)
+        os.mkdir(path)    
     # taking initial density perturbation to be zero
     f0 = np.zeros(ua.shape); 
 
@@ -28,7 +30,7 @@ def Simulation(maindir,ua,ub,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,cou
     u = np.abs(ua+ub); # envelope to plot
     uaang=np.angle(ua)
     ubang=np.angle(ub)
-    save(path+'/data'+str(0)+'.npy',ua,ub)
+    #save(path+'/data'+str(0)+'.npy',ua,ub)
     #for in1 in range(len(x)):
     #    for in2 in range(len(y)):
     #        if np.abs(ua[in1,in2])<1e-2*np.amax(np.abs(ua)):
@@ -63,8 +65,8 @@ def Simulation(maindir,ua,ub,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,cou
             u = np.abs(ua+ub); # envelope to plot
             uaang=np.angle(ua)
             ubang=np.angle(ub)
-            save(path+'/data_ua_'+str(i)+'.npy',ua)
-            save(path+'/data_ub_'+str(i)+'.npy',ub)
+            #save(path+'/data_ua_'+str(i)+'.npy',ua)
+            #save(path+'/data_ub_'+str(i)+'.npy',ub)
             #if (i%100==0):
             #    for in1 in range(len(x)):
             #        for in2 in range(len(y)):

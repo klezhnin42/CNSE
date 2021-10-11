@@ -10,6 +10,8 @@ tfinal = 500; # final time, in omega_1^-1
 dt = 1*dx;# tfinal/Nt; # time step
 Nt = tfinal/dt; # number of time slices
 
+maindir='/Users/kirill/NSEruns/multi_pump/';
+
 #solver features
 x = (2*np.pi/Nx)*np.linspace(-int(Nx/2),int(Nx/2 -1),Nx)*Lx; # x coordinate
 kx = np.concatenate([np.linspace(0,Nx/2-1,int(Nx/2-1)+1),[0],np.linspace(-Nx/2+1,-1,int(Nx/2-1))])/Lx; # wave vector
@@ -19,7 +21,7 @@ ky = np.concatenate([np.linspace(0,Ny/2-1,int(Ny/2-1)+1),[0],np.linspace(-Ny/2+1
 [k2xm,k2ym]=np.meshgrid(kx**2,ky**2);
 [kxm,kym]=np.meshgrid(kx,ky);
 
-maindir='/Users/kirill/NSEruns/multi_pump/';
+
 
 # initial conditions of the laser & constants are defined
 
@@ -31,7 +33,7 @@ vgb  = [np.cos(angleb/180*np.pi), -np.sin(angleb/180*np.pi)]; # group velocity o
 
 #coupling constants calculation
 theta=np.abs(anglea-angleb);  #oblique angle wrt x axis
-wpw1=0.4; # plasma omega to w1
+wpw1=0.2; # plasma omega to w1
 w1w2=1;   # ratio of frequencies
 Vfrs = wpw1**2/4; # coupling const in envelope eqns
 Wfrs = wpw1*(1-np.cos(theta/180*np.pi))*(1-wpw1**2); # coupling const in density eqn
