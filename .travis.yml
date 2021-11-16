@@ -3,4 +3,4 @@ install:
  - pip install numpy
  - pip install matplotlib
 script: 
- - pytest tests/*.py
+ - python3 run_tests.py
