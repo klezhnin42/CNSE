@@ -1,0 +1,7 @@
+language: python3
+install:
+ - pip install numpy
+ - pip install multiprocessing
+ - pip install matplotlib
+script: 
+ - pytest tests/*.py
