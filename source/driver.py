@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-import solver
-import output
+from source import solver
+from source import output
 import multiprocessing
 import numpy as np
 from matplotlib import pyplot as plt

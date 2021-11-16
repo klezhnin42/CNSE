@@ -4,13 +4,13 @@ import numpy as np
 import os
 from datetime import datetime
 from multiprocessing import Pool
-import solver
-import driver
-from init_angdel import *
+from source import solver
+from source import driver
+from source.tests.init_units import *
 
 if __name__ == '__main__':
     print('Starting time:',datetime.now())
-    pool = Pool(40)
+    pool = Pool(1)
     pool.starmap(driver.Simulation,datainputs)
     pool.close()
     pool.join()
