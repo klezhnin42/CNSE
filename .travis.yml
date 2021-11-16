@@ -2,5 +2,6 @@ language: python
 install:
  - pip install numpy
  - pip install matplotlib
+ - pip install scipy
 script: 
  - python3 run_tests.py
