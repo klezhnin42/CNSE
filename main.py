@@ -6,7 +6,7 @@ from datetime import datetime
 from multiprocessing import Pool
 from source import solver
 from source import driver
-from source.tests.init_units2 import *
+from source.tests.init_focus import *
 
 if __name__ == '__main__':
     print('Starting time:',datetime.now())
