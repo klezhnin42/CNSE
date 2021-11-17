@@ -34,8 +34,8 @@ def Simulation(maindir,params,ua,ub,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt
     for i in range(int(Nt)):
         if(i%10==0):
             #collecting parameters
-            energy1.append(sum(sum(ua*np.conjugate(ua))));
-            energy2.append(sum(sum(ub*np.conjugate(ub))));
+            energy1.append(np.abs(sum(sum(ua*np.conjugate(ua)))))
+            energy2.append(np.abs(sum(sum(ub*np.conjugate(ub)))))
 
             #plotting basic information & dumping envelopes
             output.basic_output(path,ua,ub,x,y,i,dt)
