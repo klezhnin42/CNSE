@@ -2,6 +2,7 @@
 
 #technical parameters for the solver
 import numpy as np
+from numpy import save
 import itertools 
 
 Lx = 800/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
@@ -94,3 +95,5 @@ for rb,phib in cpls:
     couplings.append(Vfrs*Wfrs*0.0)
 
 datainputs=[[maindir,cpl,ua0,ub0,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt] for cpl,ub0,vgb,coupling in zip(cpls,ub0s,vgbs,couplings)]
+
+#save('units0.npy',datainputs)
