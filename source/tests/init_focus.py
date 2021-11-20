@@ -6,9 +6,9 @@ from numpy import save
 import itertools 
 
 Lx = 800/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
-Ly = 800/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
+Ly = 200/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
 Nx = 2*256; # number of harmonics
-Ny = 2*256; # number of harmonics
+Ny = 2*512; # number of harmonics
 dx = Lx/Nx;
 tfinal = 400; # final time, in omega_1^-1
 dt = 1*dx;# tfinal/Nt; # time step
