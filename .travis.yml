@@ -1,5 +1,6 @@
 language: python
-install:
+install: 
+ - travis_wait mvn install
  - pip install numpy
  - pip install matplotlib
  - pip install scipy
