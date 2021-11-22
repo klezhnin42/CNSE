@@ -4,4 +4,4 @@ install:
  - pip install matplotlib
  - pip install scipy
 script: 
- - pytest
+ - travis_wait pytest
