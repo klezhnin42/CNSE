@@ -6,11 +6,11 @@ from numpy import save
 import itertools 
 
 Lx = 800/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
-Ly = 800/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
-Nx = 2*64; # number of harmonics
-Ny = 2*64; # number of harmonics
+Ly = 200/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
+Nx = 2*128; # number of harmonics
+Ny = 2*256; # number of harmonics
 dx = Lx/Nx;
-tfinal = 500; # final time, in omega_1^-1
+tfinal = 600; # final time, in omega_1^-1
 dt = 1*dx;# tfinal/Nt; # time step
 Nt = tfinal/dt; # number of time slices
 
@@ -28,12 +28,12 @@ maindir='./';
 # initial conditions of the laser & constants are defined
 
 #laser group velocity direction
-anglea = 35;
+anglea = 0;
 vga  = [np.cos(anglea/180*np.pi), -np.sin(anglea/180*np.pi)];  # group velocity of pulses, in c
 
 #coupling constants calculation
 
-wpw1=0.71; # plasma omega to w1
+wpw1=0.002; # plasma omega to w1
 Vfrs = wpw1**2/4; # coupling const in envelope eqns
 Es = 0.0; # 3/16*wpw1^2;
 cvph1=np.sqrt(1-wpw1**2);
@@ -41,17 +41,19 @@ cvph2=np.sqrt(1-wpw1**2/(1+wpw1)**2);
 k1=np.sqrt(1-wpw1**2)
 k2=np.sqrt((1+wpw1)**2-wpw1**2)
 amp=0.1
-w2w1=1+wpw1
+w2w1=1.0
 
 #definition of two laser envelopes
 
 #seed conditions
 dura = 50;
-w0a = 30; 
-zRa = np.pi*w0a**2 ;              # Rayleigh range
-xaini = -200 ;         # initial position, with respect to focus
+w0a = 2; 
+Nrefra = np.sqrt(1-wpw1**2)
+ka = Nrefra;
+zRa = np.pi*w0a**2*Nrefra*2*np.pi;              # Rayleigh range
+xaini = -300 ;         # initial position, with respect to focus
 yaini = 0 ;
-xafocus = 0 ;      # distance to focus transversly
+xafocus = 300 ;      # distance to focus transversly
 qaini = -xafocus+1j*zRa; # Complex parameter of the beam
 
 xxa = (xx-xaini)*np.cos(anglea/180*np.pi)-(yy-yaini)*np.sin(anglea/180*np.pi);
@@ -59,7 +61,7 @@ yya = (xx-xaini)*np.sin(anglea/180*np.pi)+(yy-yaini)*np.cos(anglea/180*np.pi);
 
 qaini = qaini+xxa
 
-ua0 = amp*np.exp(-1j*(yya)**2/(2*qaini))*np.exp(-(xxa)**2/(dura**2))
+ua0 = amp*np.exp(-1j*ka*(yya)**2/(2*qaini))*np.exp(-(xxa)**2/(dura**2))
 
 ua0energy=abs(sum(sum(ua0*np.conjugate(ua0))))
 
@@ -71,8 +73,8 @@ couplings=[]
 durb = 50;
 w0b = 10;
 zRb = np.pi*w0b**2 ;              # Rayleigh range
-rbini = np.linspace(200,350,1);
-angleb = np.linspace(120,130,1);
+rbini = np.linspace(100,350,1);
+angleb = np.linspace(0,90,1);
 
 cpls = list(itertools.product(rbini, angleb))
 
@@ -89,7 +91,7 @@ for rb,phib in cpls:
     alpha=np.exp(-1j*(yyb**2)/(2*qbini))*np.exp(-(xxb)**2/(durb**2))
     alphasum = abs(sum(sum(alpha*np.conjugate(alpha))))
     ampb = np.sqrt(ua0energy/alphasum)
-    ub0 = ampb*np.exp(-1j*(yyb**2)/(2*qbini))*np.exp(-(xxb)**2/(durb**2))
+    ub0 = 0.0*ampb*np.exp(-1j*(yyb**2)/(2*qbini))*np.exp(-(xxb)**2/(durb**2))
     ub0s.append(ub0)
     vgbs.append(vgb)
     couplings.append(Vfrs*Wfrs*0.0)

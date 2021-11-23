@@ -11,20 +11,20 @@ import numpy as np
 # Note that time is measured in w0^-1, spatial scales - in c/w0, speeds - in c
 #######################################
 
-def DiffractionHalfStep(va,vga,cvph,kxm,kym,k2xm,k2ym,dt):
-    return np.exp(0.25*1j*dt*(k2xm+k2ym) - 0.5*1j*dt*cvph*(kxm*vga[0] + kym*vga[1]))*va
+def DiffractionHalfStep(va,vga,cvph,w2w0,kxm,kym,k2xm,k2ym,dt):
+    return np.exp(0.25*1j*dt*(k2xm+k2ym)/w2w0 - 0.5*1j*dt*cvph*(kxm*vga[0] + kym*vga[1]))*va
 
 
-def IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,kxm,kym,k2xm,k2ym,dt,Es,coupling):
+def IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt,Es,coupling):
     # taking FFT from initial envelopes
     va=np.fft.fft2(ua) 
     vb=np.fft.fft2(ub)
-    
+   
     #first half-step wrt vg d/dx term & diffraction term
-    vna1=DiffractionHalfStep(va,vga,cvph1,kxm,kym,k2xm,k2ym,dt)
+    vna1=DiffractionHalfStep(va,vga,cvph1,1.0,kxm,kym,k2xm,k2ym,dt)
     una1=np.fft.ifft2(vna1);
-    
-    vnb1=DiffractionHalfStep(vb,vgb,cvph2,kxm,kym,k2xm,k2ym,dt)
+   
+    vnb1=DiffractionHalfStep(vb,vgb,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt)
     unb1=np.fft.ifft2(vnb1);
     
     #applying self-focusing term
@@ -49,10 +49,10 @@ def IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,kxm,kym,k2xm,k2ym,dt,Es,couplin
     
     #final half-step wrt vg d/dx term & diffraction term
     vna2=np.fft.fft2(una2);
-    va=DiffractionHalfStep(vna2,vga,cvph1,kxm,kym,k2xm,k2ym,dt)
-    
+    va=DiffractionHalfStep(vna2,vga,cvph1,1.0,kxm,kym,k2xm,k2ym,dt)
+  
     vnb2=np.fft.fft2(unb2);
-    vb=DiffractionHalfStep(vnb2,vgb,cvph2,kxm,kym,k2xm,k2ym,dt)
+    vb=DiffractionHalfStep(vnb2,vgb,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt)
 
     ua=np.fft.ifft2(va);
     ub=np.fft.ifft2(vb);

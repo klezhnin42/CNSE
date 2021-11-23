@@ -12,7 +12,7 @@ from numpy import save
 from numpy import load
 
 # driver
-def Simulation(maindir,params,ua,ub,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt):
+def Simulation(maindir,params,ua,ub,vga,vgb,cvph1,cvph2,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt):
     try:
         rb,phib=params[0],params[1]
         foldname='rb_'+str(rb)+'_phib_'+str(phib)
@@ -40,7 +40,7 @@ def Simulation(maindir,params,ua,ub,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt
             #plotting basic information & dumping envelopes
             output.basic_output(path,ua,ub,x,y,i,dt)
         # integration timestep
-        ua,ub,f0=solver.IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,kxm,kym,k2xm,k2ym,dt,Es,coupling)
+        ua,ub,f0=solver.IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt,Es,coupling)
     np.savetxt(path+'/energy1.txt',energy1)
     np.savetxt(path+'/energy2.txt',energy2)
     return path

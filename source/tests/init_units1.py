@@ -41,7 +41,7 @@ cvph2=np.sqrt(1-wpw1**2/(1+wpw1)**2);
 k1=np.sqrt(1-wpw1**2)
 k2=np.sqrt((1+wpw1)**2-wpw1**2)
 amp=0.1
-
+w2w1=1+wpw1
 
 #definition of two laser envelopes
 
@@ -94,4 +94,4 @@ for rb,phib in cpls:
     vgbs.append(vgb)
     couplings.append(Vfrs*Wfrs*0.0)
 
-datainputs=[[maindir,cpl,ua0,ub0,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt] for cpl,ub0,vgb,coupling in zip(cpls,ub0s,vgbs,couplings)]
+datainputs=[[maindir,cpl,ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt] for cpl,ub0,vgb,coupling in zip(cpls,ub0s,vgbs,couplings)]
