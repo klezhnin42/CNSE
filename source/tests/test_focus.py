@@ -10,7 +10,7 @@ from datetime import datetime
 from .. import solver
 from .. import driver
 
-WIDTH_PRECISION=5e-2
+WIDTH_PRECISION=3e-2
 ENERGY_CONSERVATION=1e-6
 
 def test_focus():
@@ -30,13 +30,21 @@ def test_focus():
         uaenv=np.sqrt(np.abs(ua*np.conjugate(ua)))
         ymax.append(np.amax(uaenv))
         indx=np.argmax(uaenv[int(uaenv.shape[0]/2),:])
-        indx2=np.where(np.abs(uaenv[int(uaenv.shape[0]/2):,indx]-np.amax(uaenv[int(uaenv.shape[0]/2):,indx])/np.exp(1.0))<2e-3)
+        indx2=np.where(np.abs(uaenv[int(uaenv.shape[0]/2):,indx]-np.amax(uaenv[int(uaenv.shape[0]/2):,indx])/np.exp(1.0))<3e-3)
+        indx2r=indx2[0][int(len(indx2[0])/2)]
         xmax.append(x[indx])
-        dw.append(np.abs(y[int(uaenv.shape[0]/2)+indx2[0][0]]))
+        dw.append(np.abs(y[int(uaenv.shape[0]/2)+indx2r]))
 
-    w0a=4.0
+    # beam waist & Rayleigh length in physical units
+    w0a=2.0
     zRa = np.pi*w0a**2
-    dwexpctd=[w0a*np.sqrt(2.0*np.pi)*np.sqrt(1+x**2/zRa**2) for x in xmax]
+    #  converting to physical units to compare with theoretical predict.
+    dw=[x/2/np.pi for x in dw]
+    # same here
+    xmax = [x/(2*np.pi) for x in xmax]
+
+    # analytical behavior of the Gaussian beam width
+    dwexpctd=[w0a*np.sqrt(1+x**2/zRa**2) for x in xmax] 
     dwdr=[(x-y)/x for x,y in zip(dw,dwexpctd)]
     
     assert np.mean(np.abs(dwdr))<WIDTH_PRECISION

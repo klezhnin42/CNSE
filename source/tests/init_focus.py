@@ -7,10 +7,10 @@ import itertools
 
 Lx = 800/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
 Ly = 200/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
-Nx = 2*256; # number of harmonics
-Ny = 2*512; # number of harmonics
+Nx = 2*128; # number of harmonics
+Ny = 2*256; # number of harmonics
 dx = Lx/Nx;
-tfinal = 400; # final time, in omega_1^-1
+tfinal = 600; # final time, in omega_1^-1
 dt = 1*dx;# tfinal/Nt; # time step
 Nt = tfinal/dt; # number of time slices
 
@@ -47,11 +47,13 @@ amp=0.1
 
 #seed conditions
 dura = 50;
-w0a = 4; 
-zRa = np.pi*w0a**2 ;              # Rayleigh range
-xaini = -200 ;         # initial position, with respect to focus
+w0a = 2; 
+Nrefra = np.sqrt(1-wpw1**2)
+ka = Nrefra;
+zRa = np.pi*w0a**2*Nrefra*2*np.pi;              # Rayleigh range
+xaini = -300 ;         # initial position, with respect to focus
 yaini = 0 ;
-xafocus = 200 ;      # distance to focus transversly
+xafocus = 300 ;      # distance to focus transversly
 qaini = -xafocus+1j*zRa; # Complex parameter of the beam
 
 xxa = (xx-xaini)*np.cos(anglea/180*np.pi)-(yy-yaini)*np.sin(anglea/180*np.pi);
@@ -59,7 +61,7 @@ yya = (xx-xaini)*np.sin(anglea/180*np.pi)+(yy-yaini)*np.cos(anglea/180*np.pi);
 
 qaini = qaini+xxa
 
-ua0 = amp*np.exp(-1j*(yya)**2/(2*qaini))*np.exp(-(xxa)**2/(dura**2))
+ua0 = amp*np.exp(-1j*ka*(yya)**2/(2*qaini))*np.exp(-(xxa)**2/(dura**2))
 
 ua0energy=abs(sum(sum(ua0*np.conjugate(ua0))))
 

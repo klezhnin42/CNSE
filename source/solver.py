@@ -3,8 +3,17 @@
 
 import numpy as np
 
+#######################################
+#half-step for integration of equation: 
+# (d/dt + vg * d/dx - ic^2/2 w0 d^2/dx^2) va = 0
+# In the adopted normalization (w0 t -> tau, c/w0 d/dx -> d/dx), this equation becomes:
+# (d/d tau + vg/c * d/dx - i/2 d^2/dx^2) va = 0
+# Note that time is measured in w0^-1, spatial scales - in c/w0, speeds - in c
+#######################################
+
 def DiffractionHalfStep(va,vga,cvph,kxm,kym,k2xm,k2ym,dt):
     return np.exp(0.25*1j*dt*(k2xm+k2ym) - 0.5*1j*dt*cvph*(kxm*vga[0] + kym*vga[1]))*va
+
 
 def IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,kxm,kym,k2xm,k2ym,dt,Es,coupling):
     # taking FFT from initial envelopes

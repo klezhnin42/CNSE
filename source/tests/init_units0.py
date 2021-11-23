@@ -5,16 +5,22 @@ import numpy as np
 from numpy import save
 import itertools 
 
-Lx = 800/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
-Ly = 800/(2*np.pi); # period 2*pi*L, normalized to 2pi \lambda
+# Lx and Ly are actual 'physical' lengths, all other quantities are used for solver which adopts
+# slightly different notation of time measured in w0^-1, spatial scales - in c/w0, speeds - in c
+# when defining variables for solver, we need to define them according to these rules;
+# for the output, we will measure space in 2pi c/ w0
+
+Lx = 800/(2*np.pi); # physical length of the sim box
+Ly = 800/(2*np.pi); # physical height of the sim box
 Nx = 2*64; # number of harmonics
 Ny = 2*64; # number of harmonics
-dx = Lx/Nx;
+dx = Lx/Nx; # grid size, in physical units/cell
 tfinal = 500; # final time, in omega_1^-1
 dt = 1*dx;# tfinal/Nt; # time step
 Nt = tfinal/dt; # number of time slices
 
-#solver features
+#solver features; please see a comment above for unit notation
+
 x = (2*np.pi/Nx)*np.linspace(-int(Nx/2),int(Nx/2 -1),Nx)*Lx; # x coordinate
 kx = np.concatenate([np.linspace(0,Nx/2-1,int(Nx/2-1)+1),[0],np.linspace(-Nx/2+1,-1,int(Nx/2-1))])/Lx; # wave vector
 y = (2*np.pi/Ny)*np.linspace(-int(Ny/2),int(Ny/2 -1),Ny)*Ly; # y coordinate
