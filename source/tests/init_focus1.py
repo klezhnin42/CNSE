@@ -90,6 +90,7 @@ for rb,phib in cpls:
     qbini = -xbfocus+1j*zRb ; # Complex parameter of the beam
     xxb = (xx-xbini)*np.cos(phib/180*np.pi)-(yy-ybini)*np.sin(phib/180*np.pi);
     yyb = (xx-xbini)*np.sin(phib/180*np.pi)+(yy-ybini)*np.cos(phib/180*np.pi);
+    qbini = qbini + xxb
     alpha=np.exp(-1j*(yyb**2)/(2*qbini))*np.exp(-(xxb)**2/(durb**2))
     alphasum = abs(sum(sum(alpha*np.conjugate(alpha))))
     ampb = np.sqrt(ua0energy/alphasum)
