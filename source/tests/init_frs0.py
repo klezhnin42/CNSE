@@ -12,8 +12,8 @@ import itertools
 
 Lx = 800/(2*np.pi); # physical length of the sim box
 Ly = 800/(2*np.pi); # physical height of the sim box
-Nx = 2*256; # number of harmonics
-Ny = 2*256; # number of harmonics
+Nx = 2*64; # number of harmonics
+Ny = 2*64; # number of harmonics
 dx = Lx/Nx; # grid size, in physical units/cell
 tfinal = 500; # final time, in omega_1^-1
 dt = 1*dx;# tfinal/Nt; # time step
