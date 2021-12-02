@@ -11,9 +11,9 @@ import itertools
 # for the output, we will measure space in 2pi c/ w0
 
 Lx = 800/(2*np.pi); # physical length of the sim box
-Ly = 800/(2*np.pi); # physical height of the sim box
-Nx = 2*64; # number of harmonics
-Ny = 2*64; # number of harmonics
+Ly = 100/(2*np.pi); # physical height of the sim box
+Nx = 2*128; # number of harmonics
+Ny = 2*8; # number of harmonics
 dx = Lx/Nx; # grid size, in physical units/cell
 tfinal = 500; # final time, in omega_1^-1
 dt = 1*dx;# tfinal/Nt; # time step
@@ -29,6 +29,9 @@ ky = np.concatenate([np.linspace(0,Ny/2-1,int(Ny/2-1)+1),[0],np.linspace(-Ny/2+1
 [k2xm,k2ym]=np.meshgrid(kx**2,ky**2);
 [kxm,kym]=np.meshgrid(kx,ky);
 
+k2xm=np.zeros((Ny,Nx))
+k2ym=np.zeros((Ny,Nx))
+
 maindir='./';
 
 # initial conditions of the laser & constants are defined
@@ -42,8 +45,8 @@ vga  = [np.cos(anglea/180*np.pi), -np.sin(anglea/180*np.pi)];  # group velocity 
 wpw1=0.2; # plasma omega to w1
 Vfrs = wpw1**2/4; # coupling const in envelope eqns
 Es = 0.0; # 3/16*wpw1^2;
-cvph1=np.sqrt(1-wpw1**2);
-cvph2=np.sqrt(1-wpw1**2/(1+wpw1)**2);
+cvph1=1.0 #np.sqrt(1-wpw1**2);
+cvph2=1.0 #np.sqrt(1-wpw1**2/(1+wpw1)**2);
 k1=np.sqrt(1-wpw1**2)
 k2=np.sqrt((1+wpw1)**2-wpw1**2)
 amp=0.01

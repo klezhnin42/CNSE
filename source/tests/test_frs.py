@@ -14,6 +14,33 @@ from .. import driver
 FRS_PRECISION=5e-2
 ENERGY_CONSERVATION=1e-6
 
+# Functions to integrate FRS solution
+
+from scipy.integrate import quad
+from scipy.special import iv
+from numpy import heaviside
+import scipy
+
+def complex_quadrature(func, a, b, **kwargs):
+    def real_func(x,a0,width,gamma2c,z,t):
+        return np.real(func(x,a0,width,gamma2c,z,t))
+    def imag_func(x,a0,width,gamma2c,z,t):
+        return np.imag(func(x,a0,width,gamma2c,z,t))
+    real_integral = quad(real_func, a, b, **kwargs)
+    imag_integral = quad(imag_func, a, b, **kwargs)
+    return (real_integral[0] + 1j*imag_integral[0], real_integral[1:], imag_integral[1:])
+
+def ksi(gamma2c,x,z,t):
+    return 2.0*gamma2c*np.sqrt((z - x)*(t - z + x)+0j)
+
+def integrand(x,a0,width,gamma2c,z,t):
+    return gamma2c*np.sqrt((z-x)/(t-z+x)+0j)*iv(1,ksi(gamma2c,x,z,t)+0j)*heaviside(t-z+x,0.5)*a0*np.exp(-x**10/width**10)
+
+def analytical_envelope(a0,width,gamma2c,z,t):
+    intgrnd=complex_quadrature(integrand,-np.inf,np.inf,args=(a0,width,gamma2c,z,t))
+    return intgrnd
+
+
 def test_frs0():
     from .init_frs0 import maindir,cpls,ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
     path=driver.Simulation(maindir,cpls[0],ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings[0],Nt)
@@ -23,36 +50,41 @@ def test_frs0():
             if file.startswith("data_ua"):
                 fllst.append(file)
     fllst.sort(key=lambda f: int(re.sub(r'\D', '', f)))
-    ymax=[]
-    for file in fllst:
+
+    # array to calculate mean envelope error    
+    derr=[]
+
+    # parameters to calculate the analytical solution
+    wpw1=0.2
+    k1=np.sqrt(1-wpw1**2)
+    k2=np.sqrt((1+wpw1)**2-wpw1**2)
+    width=50
+    apump=0.1
+    V1=wpw1**2/4
+    W1=1.0/wpw1*(k1**2+k2**2-2.0*k1*k2*np.cos(0.0/180*np.pi))
+    VFRS=np.sqrt(V1*W1)
+    gamma2c=apump*VFRS
+    a0=0.01
+    times=np.linspace(0,500,11)
+
+    i=0
+    # loop to collect envelope integration errors
+    for file in fllst[::10]:
         ua=np.load(path+'/'+file)
         uaenv=np.sqrt(np.abs(ua*np.conjugate(ua)))
-        ymax.append(np.amax(uaenv))
+        uaenv1d=uaenv[8,:] 
+        zz=np.linspace(-400,400,256)
+        envlp=[np.real(analytical_envelope(a0,width,gamma2c,z+200,times[i])[0]+a0*np.exp(-(z-times[i]+200)**10/width**10)) for z in zz]
+        derr.append([(x-y)/a0 for x,y in zip(envlp,uaenv1d)]) 
+        i=i+1 
 
-    # define plasma frequency
-    wpew0 = w2w1 - 1.0
-    # define plasma density
-    nencr=wpew0**2
-    # define pump field amplitude
-    a1 = np.amax(ub0)
-    # define time axis
-    times=np.linspace(0,500,51)
-    # calc FRS growth rate
-    gFRS = 0.25*(1.0/(1.0+wpew0))**1.5*(nencr)**0.75*a1
-    # calculate expected linearized growth
-    expected_grwth = [1.0 + gFRS*t for t in times] 
-    # normalize evolution of seed max amplitude
-    ymax = [y/ymax[0] for y in ymax]
-    # relative difference
-    dd = [(x-y)/x for x,y in zip(expected_grwth,ymax)]
-    # smoothen the array above
-    ddsmooth = savgol_filter(dd, 51, 5)
-    assert np.amax(np.abs(ddsmooth)) < FRS_PRECISION
-    
+    # checking whether maximum mean error over time is small enough
+    assert np.amax([np.mean(np.abs(x)) for x in derr]) < FRS_PRECISION
+
     # check energy conservation
     en1=np.abs(np.loadtxt(path+'/energy1.txt'))
     en2=np.abs(np.loadtxt(path+'/energy2.txt'))
     entot=en1+en2
-    assert np.abs((np.amax(entot)-np.amin(entot))/np.amax(entot)<ENERGY_CONSERVATION)
+    assert np.abs((np.amax(entot)-np.amin(entot))/np.amin(entot)<ENERGY_CONSERVATION)
 
 
