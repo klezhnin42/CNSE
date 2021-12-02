@@ -34,14 +34,14 @@ def IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt,Es,co
     
     #handling source term due to density perturbations
     A11 = 1.0-(dt*np.abs(f0))**2/2.0; # sqrt(1.-(dt.*abs(f0)).^2) ;
-    A12 = f0*dt;
-    A21 = -1.0*np.conjugate(f0)*dt;
+    A12 = np.conjugate(f0)*dt;
+    A21 = -1.0*f0*dt;
     A22 = 1.0-(dt*np.abs(f0))**2/2.0; # sqrt(1.-(dt.*abs(f0)).^2) ;   
 
     a = (A11*una2+A12*unb2);
     b = (A21*una2+A22*unb2);
 
-    f = f0+dt*a*np.conjugate(b)*coupling
+    f = f0+dt*np.conjugate(a)*b*coupling
 
     una2 = a; 
     unb2 = b; 

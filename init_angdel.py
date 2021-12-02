@@ -43,8 +43,8 @@ cvph1=np.sqrt(1-wpw1**2);
 cvph2=np.sqrt(1-wpw1**2/(1+wpw1)**2);
 k1=np.sqrt(1-wpw1**2)
 k2=np.sqrt((1+wpw1)**2-wpw1**2)
-amp=0.2
-
+amp=0.05
+w2w1=1+wpw1
 
 #definition of two laser envelopes
 
@@ -74,8 +74,8 @@ couplings=[]
 durb = 50;
 w0b = 20;
 zRb = np.pi*w0b**2 ;              # Rayleigh range
-rbini = np.linspace(50,350,50);
-angleb = np.linspace(10,90,50);
+rbini = np.linspace(200,350,1);
+angleb = np.linspace(60,90,1);
 
 cpls = list(itertools.product(rbini, angleb))
 
@@ -98,4 +98,4 @@ for rb,phib in cpls:
     vgbs.append(vgb)
     couplings.append(Vfrs*Wfrs)
 
-datainputs=[[maindir,cpl,ua0,ub0,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt] for cpl,ub0,vgb,coupling in zip(cpls,ub0s,vgbs,couplings)]
+datainputs=[[maindir,cpl,ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt] for cpl,ub0,vgb,coupling in zip(cpls,ub0s,vgbs,couplings)]
