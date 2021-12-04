@@ -33,7 +33,7 @@ vga  = [np.cos(anglea/180*np.pi), -np.sin(anglea/180*np.pi)];  # group velocity 
 
 #coupling constants calculation
 theta=np.abs(anglea-angleb);  #oblique angle wrt x axis
-wpw1=0.4; # plasma omega to w1
+wpw1=0.2; # plasma omega to w1
 w1w2=1;   # ratio of frequencies
 Vfrs = wpw1**2/4; # coupling const in envelope eqns
 Wfrs = wpw1*(1-np.cos(theta/180*np.pi))*(1-wpw1**2); # coupling const in density eqn
@@ -41,7 +41,8 @@ coupling=Vfrs*Wfrs
 Es = 0.0; # 3/16*wpw1^2;
 cvph1=np.sqrt(1-wpw1**2);
 cvph2=(1-wpw1)*np.sqrt(1-wpw1**2*(1-wpw1)**2);
-amp=0.2
+amp=0.05
+w2w1=1+wpw1
 
 #definition of two laser envelopes
 
@@ -67,15 +68,15 @@ ub0s=[]
 #durb = 50;
 #w0b = 20;
 vgb  = [np.cos(angleb/180*np.pi), -np.sin(angleb/180*np.pi)];
-rb = 160;
+rb = 200;
 xbini = -rb*np.cos(angleb/180*np.pi) ;         # initial position, with respect to focus
 ybini = rb*np.sin(angleb/180*np.pi)  ;
-ybfocus = -100;        # distance to focus transversly
+ybfocus = rb;        # distance to focus transversly
 xxb = (xx-xbini)*np.cos(angleb/180*np.pi)-(yy-ybini)*np.sin(angleb/180*np.pi);
 yyb = (xx-xbini)*np.sin(angleb/180*np.pi)+(yy-ybini)*np.cos(angleb/180*np.pi);
 
-w0bs = np.linspace(5,50,10)
-durbs = np.linspace(5,300,10)
+w0bs = np.linspace(5,300,2)
+durbs = np.linspace(5,300,2)
 
 
 #rbini = np.linspace(50,150,3);
@@ -86,7 +87,11 @@ cpls = list(itertools.product(w0bs, durbs))
 for w0b,durb in cpls:   
     zRb = np.pi*w0b**2 
     qbini = -ybfocus+1j*zRb ; # Complex parameter of the beam
-    ub0 = amp*np.exp(-1j*(yyb**2)/(2*qbini))*np.exp(-(xxb)**2/(durb**2))
+    ua0en=np.sum(np.abs(ua0*np.conjugate(ua0)))
+    alpha = np.exp(-1j*(yyb**2)/(2*qbini))*np.exp(-(xxb)**2/(durb**2))
+    alphaen = np.sum(np.abs(alpha*np.conjugate(alpha)))
+    ampb = np.sqrt(ua0en/alphaen)
+    ub0 = ampb*alpha
     ub0s.append(ub0)
 
-datainputs=[[maindir,ua0,ub0,vga,vgb,cvph1,cvph2,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt] for ub0 in ub0s]
+datainputs=[[maindir,cpl,ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt] for cpl,ub0 in zip(cpls,ub0s)]
