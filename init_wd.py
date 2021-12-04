@@ -34,9 +34,10 @@ vga  = [np.cos(anglea/180*np.pi), -np.sin(anglea/180*np.pi)];  # group velocity 
 #coupling constants calculation
 theta=np.abs(anglea-angleb);  #oblique angle wrt x axis
 wpw1=0.2; # plasma omega to w1
-w1w2=1;   # ratio of frequencies
+k1=np.sqrt(1-wpw1**2)
+k2=np.sqrt((1+wpw1)**2-wpw1**2)
 Vfrs = wpw1**2/4; # coupling const in envelope eqns
-Wfrs = wpw1*(1-np.cos(theta/180*np.pi))*(1-wpw1**2); # coupling const in density eqn
+Wfrs = Wfrs = 1.0/wpw1*(k1**2+k2**2-2.0*k1*k2*np.cos(theta/180*np.pi)) #wpw1*(1-np.cos(theta/180*np.pi))*(1-wpw1**2); # coupling const in density eqn
 coupling=Vfrs*Wfrs
 Es = 0.0; # 3/16*wpw1^2;
 cvph1=np.sqrt(1-wpw1**2);
@@ -75,8 +76,8 @@ ybfocus = rb;        # distance to focus transversly
 xxb = (xx-xbini)*np.cos(angleb/180*np.pi)-(yy-ybini)*np.sin(angleb/180*np.pi);
 yyb = (xx-xbini)*np.sin(angleb/180*np.pi)+(yy-ybini)*np.cos(angleb/180*np.pi);
 
-w0bs = np.linspace(5,300,2)
-durbs = np.linspace(5,300,2)
+w0bs = np.linspace(20,300,1)
+durbs = np.linspace(50,300,1)
 
 
 #rbini = np.linspace(50,150,3);
