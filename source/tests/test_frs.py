@@ -11,7 +11,7 @@ from datetime import datetime
 from .. import solver
 from .. import driver
 
-FRS_PRECISION=5e-2
+FRS_PRECISION=2e-2
 ENERGY_CONSERVATION=1e-6
 
 # Functions to integrate FRS solution
@@ -34,7 +34,7 @@ def ksi(gamma2c,x,z,t):
     return 2.0*gamma2c*np.sqrt((z - x)*(t - z + x)+0j)
 
 def integrand(x,a0,width,gamma2c,z,t):
-    return gamma2c*np.sqrt((z-x)/(t-z+x)+0j)*iv(1,ksi(gamma2c,x,z,t)+0j)*heaviside(t-z+x,0.5)*a0*np.exp(-x**10/width**10)
+    return gamma2c*np.sqrt((z-x)/(t-z+x)+0j)*iv(1,ksi(gamma2c,x,z,t)+0j)*heaviside(z-x,0.5)*heaviside(t-z+x,0.5)*a0*np.exp(-x**10/width**10)
 
 def analytical_envelope(a0,width,gamma2c,z,t):
     intgrnd=complex_quadrature(integrand,-np.inf,np.inf,args=(a0,width,gamma2c,z,t))
