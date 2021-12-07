@@ -44,3 +44,40 @@ def Simulation(maindir,params,ua,ub,vga,vgb,cvph1,cvph2,w2w0,x,y,kxm,kym,k2xm,k2
     np.savetxt(path+'/energy1.txt',energy1)
     np.savetxt(path+'/energy2.txt',energy2)
     return path
+
+#driver for two-pump simulation
+def SimulationTwoPump(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2,Nt):
+    try:
+        rb,phib=params[0],params[1]
+        foldname='rb_'+str(rb)+'_phib_'+str(phib)
+        path=os.path.join(maindir,foldname)
+        os.mkdir(path)
+    except:
+        now = datetime.now()
+        timestamp = now.strftime("%d%m%y_%H%M%S")
+        foldname = timestamp + str(multiprocessing.current_process())
+        path=os.path.join(maindir,foldname)
+        os.mkdir(path)
+    # taking initial density perturbation to be zero
+    f0 = np.zeros(ua.shape)
+    g0 = np.zeros(ua.shape) 
+ 
+    #parameters to collect
+    energy1=[]
+    energy2=[]
+    energy3=[]
+
+    for i in range(int(Nt)):
+        if(i%10==0):
+            #collecting parameters
+            energy1.append(np.abs(sum(sum(ua*np.conjugate(ua)))))
+            energy2.append(np.abs(sum(sum(ub*np.conjugate(ub)))))
+            energy3.append(np.abs(sum(sum(uc*np.conjugate(uc)))))
+            #plotting basic information & dumping envelopes
+            output.basic_output(path,ua,ub+uc,x,y,i,dt)
+        # integration timestep
+        ua,ub,uc,f0,g0=solver.IntegrationStepTwoPump(f0,g0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2)
+    np.savetxt(path+'/energy1.txt',energy1)
+    np.savetxt(path+'/energy2.txt',energy2)
+    np.savetxt(path+'/energy3.txt',energy3)
+    return path
