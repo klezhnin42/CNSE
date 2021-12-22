@@ -48,8 +48,8 @@ def Simulation(maindir,params,ua,ub,vga,vgb,cvph1,cvph2,w2w0,x,y,kxm,kym,k2xm,k2
 #driver for two-pump simulation
 def SimulationTwoPump(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2,Nt):
     try:
-        rb,phib=params[0],params[1]
-        foldname='rb_'+str(rb)+'_phib_'+str(phib)
+        pr1,pr2=params[0],params[1]
+        foldname='pr1_'+str(pr1)+'_pr2_'+str(pr2)
         path=os.path.join(maindir,foldname)
         os.mkdir(path)
     except:
@@ -80,4 +80,40 @@ def SimulationTwoPump(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0
     np.savetxt(path+'/energy1.txt',energy1)
     np.savetxt(path+'/energy2.txt',energy2)
     np.savetxt(path+'/energy3.txt',energy3)
+    return path
+
+
+#driver for multi-pump simulation
+def SimulationMultiPump(maindir,params,uvec,vgvec,cvvec,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt):
+    try:
+        pr1,pr2=params[0],params[1]
+        foldname='pr1_'+str(pr1)+'_pr2_'+str(pr2)
+        path=os.path.join(maindir,foldname)
+        os.mkdir(path)
+    except:
+        now = datetime.now()
+        timestamp = now.strftime("%d%m%y_%H%M%S")
+        foldname = timestamp + str(multiprocessing.current_process())
+        path=os.path.join(maindir,foldname)
+        os.mkdir(path)
+    # taking initial density perturbation to be zero
+    f0 = np.zeros(uvec[0].shape)
+    f0s = []
+    for i in range(len(uvec)-1):
+        f0s.append(f0)
+    #parameters to collect
+    energys=[]
+
+    for jj in range(int(Nt)):
+        if(jj%10==0):
+            #collecting parameters
+            lst_en=[]
+            for dsf in uvec:
+                lst_en.append(np.abs(np.sum(dsf*np.conjugate(dsf))))
+            energys.append(lst_en)
+            #plotting basic information & dumping envelopes
+            output.basic_output(path,uvec[0],sum(uvec[1:]),x,y,jj,dt)
+        # integration timestep
+        uvec,f0s=solver.IntegrationStepMultiPump(f0s,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings)
+    np.savetxt(path+'/energy.txt',energys)
     return path
