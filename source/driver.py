@@ -98,9 +98,9 @@ def SimulationMultiPump(maindir,params,uvec,vgvec,cvvec,w2w0,x,y,kxm,kym,k2xm,k2
         os.mkdir(path)
     # taking initial density perturbation to be zero
     f0 = np.zeros(uvec[0].shape)
-    f0s = []
-    for i in range(len(uvec)-1):
-        f0s.append(f0)
+    #f0s = []
+    #for i in range(len(uvec)-1):
+    #    f0s.append(f0)
     #parameters to collect
     energys=[]
 
@@ -114,6 +114,6 @@ def SimulationMultiPump(maindir,params,uvec,vgvec,cvvec,w2w0,x,y,kxm,kym,k2xm,k2
             #plotting basic information & dumping envelopes
             output.basic_output(path,uvec[0],sum(uvec[1:]),x,y,jj,dt)
         # integration timestep
-        uvec,f0s=solver.IntegrationStepMultiPump(f0s,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings)
+        uvec,f0=solver.IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings)
     np.savetxt(path+'/energy.txt',energys)
     return path

@@ -128,7 +128,7 @@ def IntegrationStepTwoPump(f0,g0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,kxm
     return ua,ub,uc,f0,g0
 
 
-def IntegrationStepMultiPump(f0s,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings):
+def IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings):
     # taking FFT from initial envelopes
     vvec=np.fft.fft2(uvec)
 
@@ -156,34 +156,31 @@ def IntegrationStepMultiPump(f0s,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,c
     for unbenv in unb2:
         unvec.append(unbenv)
 
-    #conjugate of of beating terms, f0s
-    f0cs=[np.conjugate(b) for b in f0s]
-
     #list representation of matrix for energy exchange between beams
     Alist=[]
 
     for i in range(len(uvec)**2):
         Alist.append([])
 
-    Alist[0]=1-0.5*sum(np.array(f0s)*np.array(f0cs))*dt**2
+    Alist[0]=1-0.5*f0*np.conjugate(f0)*dt**2
  
-    for i in range(len(f0s)):
-        Alist[i+1]=dt*f0cs[i]
+    for i in range(len(unb2)):
+        Alist[i+1]=dt*np.conjugate(f0)
     
-    for i in range(len(f0s)):
-        Alist[len(uvec)*(i+1)]=-dt*f0s[i]
+    for i in range(len(unb2)):
+        Alist[len(uvec)*(i+1)]=-dt*f0
 
-    for i in range(len(f0s)):
+    for i in range(len(unb2)):
         Alist[len(uvec)*(i+1)+i+1]=np.ones((len(uvec[0]),len(uvec[0])))      
 
 
-    for i in range(len(f0s)):
-        for j in range(len(f0s)):
+    for i in range(len(unb2)):
+        for j in range(len(unb2)):
             buff=Alist[len(unvec)*(i+1)+j+1]
             if len(buff)>=1:
-                Alist[len(unvec)*(i+1)+j+1]=buff-0.5*f0s[i]*f0cs[j]*dt**2
+                Alist[len(unvec)*(i+1)+j+1]=buff-0.5*f0*np.conjugate(f0)*dt**2
             else:
-                Alist[len(unvec)*(i+1)+j+1]=-0.5*f0s[i]*f0cs[j]*dt**2
+                Alist[len(unvec)*(i+1)+j+1]=-0.5*f0*np.conjugate(f0)*dt**2
 
     #multiply matrix exponent calculated in Alist by vector of envelopes
     Alist=np.array(Alist)
@@ -195,8 +192,8 @@ def IntegrationStepMultiPump(f0s,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,c
 
     #avec is the list of arrays of envelopes
 
-    for i in range(len(f0s)):
-        f0s[i]=f0s[i]+dt*np.conjugate(avec[0])*avec[i+1]*couplings[i]
+    for i in range(len(unb2)):
+        f0=f0+dt*np.conjugate(avec[0])*avec[i+1]*couplings[i]
 
     unvec2 = avec
 
@@ -215,4 +212,4 @@ def IntegrationStepMultiPump(f0s,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,c
     for unbenv in unb1:
         uvec.append(unbenv)
 
-    return uvec,f0s
+    return uvec,f0
