@@ -171,7 +171,7 @@ def IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,co
         Alist[len(uvec)*(i+1)]=-dt*f0
 
     for i in range(len(unb2)):
-        Alist[len(uvec)*(i+1)+i+1]=np.ones((len(uvec[0]),len(uvec[0])))      
+        Alist[len(uvec)*(i+1)+i+1]=np.ones(uvec[0].shape)      
 
 
     for i in range(len(unb2)):
