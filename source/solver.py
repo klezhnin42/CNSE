@@ -127,6 +127,7 @@ def IntegrationStepTwoPump(f0,g0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,kxm
 
     return ua,ub,uc,f0,g0
 
+#multi-pump integrator
 
 def IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings):
     # taking FFT from initial envelopes
