@@ -27,3 +27,10 @@ def basic_output(path,ua,ub,x,y,i,dt):
     fig.suptitle('t='+str(int(i*dt)))
     plt.savefig(path+'/EM_'+str(i)+'.png')
     plt.close()
+
+def debug_output(path,ua,ubs,f0,i):
+    # save envelopes
+    save(path+'/data_ua_'+str(i)+'.npy',ua)
+    save(path+'/data_ub_'+str(i)+'.npy',ubs)
+    save(path+'/data_f0_'+str(i)+'.npy',f0)
+
