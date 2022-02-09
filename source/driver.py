@@ -83,6 +83,44 @@ def SimulationTwoPump(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0
     return path
 
 
+#driver for two-pump simulation with a unified beating
+def SimulationTwoPumpOneBeat(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2,Nt):
+    try:
+        pr1,pr2=params[0],params[1]
+        foldname='pr1_'+str(pr1)+'_pr2_'+str(pr2)
+        path=os.path.join(maindir,foldname)
+        os.mkdir(path)
+    except:
+        now = datetime.now()
+        timestamp = now.strftime("%d%m%y_%H%M%S")
+        foldname = timestamp + str(multiprocessing.current_process())
+        path=os.path.join(maindir,foldname)
+        os.mkdir(path)
+    # taking initial density perturbation to be zero
+    f0 = np.zeros(ua.shape)
+
+    #parameters to collect
+    energy1=[]
+    energy2=[]
+    energy3=[]
+
+    for i in range(int(Nt)):
+        if(i%10==0):
+            #collecting parameters
+            energy1.append(np.abs(sum(sum(ua*np.conjugate(ua)))))
+            energy2.append(np.abs(sum(sum(ub*np.conjugate(ub)))))
+            energy3.append(np.abs(sum(sum(uc*np.conjugate(uc)))))
+            #plotting basic information & dumping envelopes
+            output.debug_output(path,ua,[ub,uc],f0,i)
+        # integration timestep
+        ua,ub,uc,f0=solver.IntegrationStepTwoPumpOneBeat(f0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2)
+    np.savetxt(path+'/energy1.txt',energy1)
+    np.savetxt(path+'/energy2.txt',energy2)
+    np.savetxt(path+'/energy3.txt',energy3)
+    return path
+
+
+
 #driver for multi-pump simulation
 def SimulationMultiPump(maindir,params,uvec,vgvec,cvvec,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt):
     try:
@@ -112,7 +150,7 @@ def SimulationMultiPump(maindir,params,uvec,vgvec,cvvec,w2w0,x,y,kxm,kym,k2xm,k2
                 lst_en.append(np.abs(np.sum(dsf*np.conjugate(dsf))))
             energys.append(lst_en)
             #plotting basic information & dumping envelopes
-            output.basic_output(path,uvec[0],sum(uvec[1:]),x,y,jj,dt)
+            output.debug_output(path,uvec[0],uvec[1:],f0,jj)
         # integration timestep
         uvec,f0=solver.IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings)
     np.savetxt(path+'/energy.txt',energys)
