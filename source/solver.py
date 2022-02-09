@@ -277,3 +277,95 @@ def IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,co
         uvec.append(unbenv)
 
     return uvec,f0
+
+#multi-pump multi-beat integrator
+
+def IntegrationStepMultiPumpMultiBeat(f0s,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings):
+    # taking FFT from initial envelopes
+    vvec=np.fft.fft2(uvec)
+
+    #first half-step wrt vg d/dx term & diffraction term
+
+    vna1=DiffractionHalfStep(vvec[0],vgvec[0],cvvec[0],1.0,kxm,kym,k2xm,k2ym,dt)
+    una1=np.fft.ifft2(vna1)
+
+    vnb1=DiffractionHalfStepPump(vvec[1:],vgvec[1:],cvvec[1:],w2w0,kxm,kym,k2xm,k2ym,dt)
+    unb1=np.fft.ifft2(vnb1)
+
+    #applying self-focusing term
+    pot=(np.abs(una1))**2
+    for unb in unb1:
+        pot=pot+np.abs(unb)**2
+    pot=Es*pot
+
+    una2=np.exp(-1j*dt*pot)*una1
+    for i in range(len(unb1)):
+        unb1[i]=np.exp(-1j*dt*pot)*unb1[i]
+    unb2=unb1
+
+    unvec=[]
+    unvec.append(una2)
+    for unbenv in unb2:
+        unvec.append(unbenv)
+
+    #list representation of matrix for energy exchange between beams
+    Alist=[]
+
+    for i in range(len(uvec)**2):
+        Alist.append([])
+
+    Alist[0]=1.0
+
+    for f0 in f0s:
+        Alist[0]=Alist[0]-0.5*f0*np.conjugate(f0)*dt**2
+
+    for i in range(len(unb2)):
+        Alist[i+1]=dt*np.conjugate(f0s[i])
+
+    for i in range(len(unb2)):
+        Alist[len(uvec)*(i+1)]=-dt*f0s[i]
+
+    for i in range(len(unb2)):
+        Alist[len(uvec)*(i+1)+i+1]=np.ones(uvec[0].shape)
+
+
+    for i in range(len(unb2)):
+        for j in range(len(unb2)):
+            buff=Alist[len(unvec)*(i+1)+j+1]
+            if len(buff)>=1:
+                Alist[len(unvec)*(i+1)+j+1]=buff-0.5*f0s[i]*np.conjugate(f0s[j])*dt**2
+            else:
+                Alist[len(unvec)*(i+1)+j+1]=-0.5*f0s[i]*np.conjugate(f0s[j])*dt**2
+
+    #multiply matrix exponent calculated in Alist by vector of envelopes
+    Alist=np.array(Alist)
+    unvec=np.array(unvec)
+
+    avec=[]
+    for i in range(len(unvec)):
+        avec.append(sum(Alist[i*len(unvec):(i+1)*len(unvec),:,:]*unvec))
+
+    #avec is the list of arrays of envelopes
+
+    for i in range(len(unb2)):
+        f0s[i]=f0s[i]+dt*np.conjugate(avec[0])*avec[i+1]*couplings[i]
+
+    unvec2 = avec
+
+    #final half-step wrt vg d/dx term & diffraction term
+    vvec=np.fft.fft2(unvec2)
+    
+    vna1=DiffractionHalfStep(vvec[0],vgvec[0],cvvec[0],1.0,kxm,kym,k2xm,k2ym,dt)
+    una1=np.fft.ifft2(vna1)
+    
+    vnb1=DiffractionHalfStepPump(vvec[1:],vgvec[1:],cvvec[1:],w2w0,kxm,kym,k2xm,k2ym,dt)
+    unb1=np.fft.ifft2(vnb1)
+    
+    #collect list of envelopes to dump
+    uvec=[]
+    uvec.append(una1)
+    for unbenv in unb1:
+        uvec.append(unbenv)
+
+    return uvec,f0s
+

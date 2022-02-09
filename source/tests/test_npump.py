@@ -19,7 +19,7 @@ ENERGY_CONSERVATION=3e-7
 def test_npump():
 
     from .init_npump_tpump_cmp2 import maindir,cpls,ua0,ub0,uc0,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings1,couplings2,Nt
-    path=driver.SimulationTwoPumpOneBeat(maindir,cpls[0],ua0,ub0,uc0,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings1[0],couplings2[0],Nt)
+    path=driver.SimulationTwoPump(maindir,cpls[0],ua0,ub0,uc0,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings1[0],couplings2[0],Nt)
 
 
     # check energy conservation
@@ -31,7 +31,7 @@ def test_npump():
 
 
     from .init_npump_tpump_cmp1 import maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
-    path=driver.SimulationMultiPump(maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt)
+    path=driver.SimulationMultiPumpMultiBeat(maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt)
 
     # check energy conservation
     en=np.abs(np.loadtxt(path+'/energy.txt'))

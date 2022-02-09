@@ -93,7 +93,7 @@ def test_frs0():
 #testing the same FRS conditions as before but for Multi-Pump solver
 def test_frs1():
     from .init_frs1 import maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
-    path=driver.SimulationMultiPump(maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt)
+    path=driver.SimulationMultiPumpMultiBeat(maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt)
     fllst=[]
     for root, dirs, files in os.walk(path):
         for file in files:

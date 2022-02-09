@@ -155,3 +155,38 @@ def SimulationMultiPump(maindir,params,uvec,vgvec,cvvec,w2w0,x,y,kxm,kym,k2xm,k2
         uvec,f0=solver.IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings)
     np.savetxt(path+'/energy.txt',energys)
     return path
+
+#driver for multi-pump, multi-beating simulation
+def SimulationMultiPumpMultiBeat(maindir,params,uvec,vgvec,cvvec,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt):
+    try:
+        pr1,pr2=params[0],params[1]
+        foldname='pr1_'+str(pr1)+'_pr2_'+str(pr2)
+        path=os.path.join(maindir,foldname)
+        os.mkdir(path)
+    except:
+        now = datetime.now()
+        timestamp = now.strftime("%d%m%y_%H%M%S")
+        foldname = timestamp + str(multiprocessing.current_process())
+        path=os.path.join(maindir,foldname)
+        os.mkdir(path)
+    # taking initial density perturbation to be zero
+    f0 = np.zeros(uvec[0].shape)
+    f0s = []
+    for i in range(len(uvec)-1):
+        f0s.append(f0)
+    #parameters to collect
+    energys=[]
+
+    for jj in range(int(Nt)):
+        if(jj%10==0):
+            #collecting parameters
+            lst_en=[]
+            for dsf in uvec:
+                lst_en.append(np.abs(np.sum(dsf*np.conjugate(dsf))))
+            energys.append(lst_en)
+            #plotting basic information & dumping envelopes
+            output.debug_output(path,uvec[0],uvec[1:],f0s,jj)
+        # integration timestep
+        uvec,f0s=solver.IntegrationStepMultiPumpMultiBeat(f0s,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings)
+    np.savetxt(path+'/energy.txt',energys)
+    return path
