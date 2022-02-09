@@ -152,7 +152,7 @@ def IntegrationStepTwoPumpOneBeat(f0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0
     unc2=np.exp(-1j*dt*pot)*unc1
 
     #handling source term due to density perturbations
-    A11 = 1.0-(dt*np.abs(f0))**2/2.0 # sqrt(1.-(dt.*abs(f0)).^2) ;
+    A11 = 1.0-(dt*np.abs(f0))**2/2.0-(dt*np.abs(f0))**2/2.0 # sqrt(1.-(dt.*abs(f0)).^2) ;
     A12 = np.conjugate(f0)*dt
     A13 = np.conjugate(f0)*dt
     A21 = -1.0*f0*dt
@@ -226,8 +226,8 @@ def IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,co
     for i in range(len(uvec)**2):
         Alist.append([])
 
-    Alist[0]=1-0.5*f0*np.conjugate(f0)*dt**2
- 
+    Alist[0]=1-0.5*f0*np.conjugate(f0)*dt**2*len(unb2)
+
     for i in range(len(unb2)):
         Alist[i+1]=dt*np.conjugate(f0)
     

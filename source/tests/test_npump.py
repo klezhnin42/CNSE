@@ -12,7 +12,7 @@ from .. import solver
 from .. import driver
 
 CMP_PRECISION=3e-14
-ENERGY_CONSERVATION=3e-3
+ENERGY_CONSERVATION=3e-7
 
 
 #testing the same FRS conditions as before but for Multi-Pump solver
