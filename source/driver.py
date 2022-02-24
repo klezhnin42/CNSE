@@ -12,7 +12,7 @@ from numpy import save
 from numpy import load
 
 # driver
-def Simulation(maindir,params,ua,ub,vga,vgb,cvph1,cvph2,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt):
+def Simulation(maindir,params,ua,ub,vga,vgb,cvph1,cvph2,w2w0,wpw0,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling,Nt):
     try:
         rb,phib=params[0],params[1]
         foldname='rb_'+str(rb)+'_phib_'+str(phib)
@@ -40,13 +40,13 @@ def Simulation(maindir,params,ua,ub,vga,vgb,cvph1,cvph2,w2w0,x,y,kxm,kym,k2xm,k2
             #plotting basic information & dumping envelopes
             output.basic_output(path,ua,ub,x,y,i,dt)
         # integration timestep
-        ua,ub,f0=solver.IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt,Es,coupling)
+        ua,ub,f0=solver.IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt,Es,coupling)
     np.savetxt(path+'/energy1.txt',energy1)
     np.savetxt(path+'/energy2.txt',energy2)
     return path
 
 #driver for two-pump simulation
-def SimulationTwoPump(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2,Nt):
+def SimulationTwoPump(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,wpw0,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2,Nt):
     try:
         pr1,pr2=params[0],params[1]
         foldname='pr1_'+str(pr1)+'_pr2_'+str(pr2)
@@ -76,7 +76,7 @@ def SimulationTwoPump(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0
             #plotting basic information & dumping envelopes
             output.basic_output(path,ua,ub+uc,x,y,i,dt)
         # integration timestep
-        ua,ub,uc,f0,g0=solver.IntegrationStepTwoPump(f0,g0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2)
+        ua,ub,uc,f0,g0=solver.IntegrationStepTwoPump(f0,g0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2)
     np.savetxt(path+'/energy1.txt',energy1)
     np.savetxt(path+'/energy2.txt',energy2)
     np.savetxt(path+'/energy3.txt',energy3)
@@ -84,7 +84,7 @@ def SimulationTwoPump(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0
 
 
 #driver for two-pump simulation with a unified beating
-def SimulationTwoPumpOneBeat(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2,Nt):
+def SimulationTwoPumpOneBeat(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,wpw0,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2,Nt):
     try:
         pr1,pr2=params[0],params[1]
         foldname='pr1_'+str(pr1)+'_pr2_'+str(pr2)
@@ -113,7 +113,7 @@ def SimulationTwoPumpOneBeat(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvp
             #plotting basic information & dumping envelopes
             output.debug_output(path,ua,[ub,uc],f0,i)
         # integration timestep
-        ua,ub,uc,f0=solver.IntegrationStepTwoPumpOneBeat(f0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2)
+        ua,ub,uc,f0=solver.IntegrationStepTwoPumpOneBeat(f0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2)
     np.savetxt(path+'/energy1.txt',energy1)
     np.savetxt(path+'/energy2.txt',energy2)
     np.savetxt(path+'/energy3.txt',energy3)
@@ -122,7 +122,7 @@ def SimulationTwoPumpOneBeat(maindir,params,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvp
 
 
 #driver for multi-pump simulation
-def SimulationMultiPump(maindir,params,uvec,vgvec,cvvec,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt):
+def SimulationMultiPump(maindir,params,uvec,vgvec,cvvec,w2w0,wpw0,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt):
     try:
         pr1,pr2=params[0],params[1]
         foldname='pr1_'+str(pr1)+'_pr2_'+str(pr2)
@@ -152,12 +152,12 @@ def SimulationMultiPump(maindir,params,uvec,vgvec,cvvec,w2w0,x,y,kxm,kym,k2xm,k2
             #plotting basic information & dumping envelopes
             output.debug_output(path,uvec[0],uvec[1:],f0,jj)
         # integration timestep
-        uvec,f0=solver.IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings)
+        uvec,f0=solver.IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt,Es,couplings)
     np.savetxt(path+'/energy.txt',energys)
     return path
 
 #driver for multi-pump, multi-beating simulation
-def SimulationMultiPumpMultiBeat(maindir,params,uvec,vgvec,cvvec,w2w0,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt):
+def SimulationMultiPumpMultiBeat(maindir,params,uvec,vgvec,cvvec,w2w0,wpw0,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt):
     try:
         pr1,pr2=params[0],params[1]
         foldname='pr1_'+str(pr1)+'_pr2_'+str(pr2)
@@ -187,6 +187,6 @@ def SimulationMultiPumpMultiBeat(maindir,params,uvec,vgvec,cvvec,w2w0,x,y,kxm,ky
             #plotting basic information & dumping envelopes
             output.debug_output(path,uvec[0],uvec[1:],f0s,jj)
         # integration timestep
-        uvec,f0s=solver.IntegrationStepMultiPumpMultiBeat(f0s,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings)
+        uvec,f0s=solver.IntegrationStepMultiPumpMultiBeat(f0s,uvec,vgvec,cvvec,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt,Es,couplings)
     np.savetxt(path+'/energy.txt',energys)
     return path

@@ -150,4 +150,4 @@ vgcs.append(vgc)
 couplings1.append(Vfrs*Wfrs1)
 couplings2.append(Vfrs*Wfrs2)
 
-datainputs=[[maindir,cpl,ua0,ub0,uc0,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2,Nt] for cpl,ub0,uc0,vgb,vgc,coupling1,coupling2 in zip(cpls,ub0s,uc0s,vgbs,vgcs,couplings1,couplings2)]
+datainputs=[[maindir,cpl,ua0,ub0,uc0,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2,Nt] for cpl,ub0,uc0,vgb,vgc,coupling1,coupling2 in zip(cpls,ub0s,uc0s,vgbs,vgcs,couplings1,couplings2)]

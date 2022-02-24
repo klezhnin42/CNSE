@@ -159,4 +159,4 @@ for vgi in vgbs:
 #couplings=[x*y for x,y in zip(couplings,mask)]
 #print(couplings)
 
-datainputs=[[maindir,cpls[0],uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt]]
+datainputs=[[maindir,cpls[0],uvec,vgvec,cvvec,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt]]

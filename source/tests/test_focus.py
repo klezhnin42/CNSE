@@ -14,8 +14,8 @@ WIDTH_PRECISION=3e-2
 ENERGY_CONSERVATION=1e-6
 
 def test_focus0():
-    from .init_focus0 import maindir,cpls,ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
-    path=driver.Simulation(maindir,cpls[0],ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings[0],Nt)
+    from .init_focus0 import maindir,cpls,ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
+    path=driver.Simulation(maindir,cpls[0],ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings[0],Nt)
     fllst=[]
     for root, dirs, files in os.walk(path):
         for file in files:
@@ -54,8 +54,8 @@ def test_focus0():
 
 
 def test_focus1():
-    from .init_focus1 import maindir,cpls,ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
-    path=driver.Simulation(maindir,cpls[0],ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings[0],Nt)
+    from .init_focus1 import maindir,cpls,ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
+    path=driver.Simulation(maindir,cpls[0],ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings[0],Nt)
     fllst=[]
     for root, dirs, files in os.walk(path):
         for file in files:

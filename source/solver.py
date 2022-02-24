@@ -11,25 +11,25 @@ import numpy as np
 # Note that time is measured in w0^-1, spatial scales - in c/w0, speeds - in c
 #######################################
 
-def DiffractionHalfStep(va,vga,cvph,w2w0,kxm,kym,k2xm,k2ym,dt):
-    return np.exp(0.25*1j*dt*(k2xm+k2ym)/w2w0 - 0.5*1j*dt*cvph*(kxm*vga[0] + kym*vga[1]))*va
+def DiffractionHalfStep(va,vga,cvph,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt):
+    return np.exp(0.25*1j*dt*(k2xm+k2ym)/w2w0-0.25*1j*dt*(kxm*vga[0] + kym*vga[1])**2*(1-wpw0**2)/w2w0 - 0.5*1j*dt*cvph*(kxm*vga[0] + kym*vga[1]))*va
 
 #DiffractionHalfStepPump(vvec[1:],vgvec[1:],cvvec[1:],w2w0,kxm,kym,k2xm,k2ym,dt)
-def DiffractionHalfStepPump(vas,vgas,cvphs,w2w0,kxm,kym,k2xm,k2ym,dt):
+def DiffractionHalfStepPump(vas,vgas,cvphs,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt):
     for i in range(len(vas)):
-        vas[i]=np.exp(0.25*1j*dt*(k2xm+k2ym)/w2w0 - 0.5*1j*dt*cvphs[i]*(kxm*vgas[i][0] + kym*vgas[i][1]))*vas[i]
+        vas[i]=np.exp(0.25*1j*dt*(k2xm+k2ym)/w2w0 -0.25*1j*dt*(kxm*vgas[i][0] + kym*vgas[i][1])**2*(1-wpw0**2)/w2w0 - 0.5*1j*dt*cvphs[i]*(kxm*vgas[i][0] + kym*vgas[i][1]))*vas[i]
     return vas
 
-def IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt,Es,coupling):
+def IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt,Es,coupling):
     # taking FFT from initial envelopes
     va=np.fft.fft2(ua) 
     vb=np.fft.fft2(ub)
    
     #first half-step wrt vg d/dx term & diffraction term
-    vna1=DiffractionHalfStep(va,vga,cvph1,1.0,kxm,kym,k2xm,k2ym,dt)
+    vna1=DiffractionHalfStep(va,vga,cvph1,1.0,wpw0,kxm,kym,k2xm,k2ym,dt)
     una1=np.fft.ifft2(vna1);
    
-    vnb1=DiffractionHalfStep(vb,vgb,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt)
+    vnb1=DiffractionHalfStep(vb,vgb,cvph2,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
     unb1=np.fft.ifft2(vnb1);
     
     #applying self-focusing term
@@ -54,10 +54,10 @@ def IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt,Es,co
     
     #final half-step wrt vg d/dx term & diffraction term
     vna2=np.fft.fft2(una2);
-    va=DiffractionHalfStep(vna2,vga,cvph1,1.0,kxm,kym,k2xm,k2ym,dt)
+    va=DiffractionHalfStep(vna2,vga,cvph1,1.0,wpw0,kxm,kym,k2xm,k2ym,dt)
   
     vnb2=np.fft.fft2(unb2);
-    vb=DiffractionHalfStep(vnb2,vgb,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt)
+    vb=DiffractionHalfStep(vnb2,vgb,cvph2,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
 
     ua=np.fft.ifft2(va);
     ub=np.fft.ifft2(vb);
@@ -65,20 +65,20 @@ def IntegrationStep(f0,ua,ub,vga,vgb,cvph1,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt,Es,co
 
 # two-pump integrator
 
-def IntegrationStepTwoPump(f0,g0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2):
+def IntegrationStepTwoPump(f0,g0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2):
     # taking FFT from initial envelopes
     va=np.fft.fft2(ua)
     vb=np.fft.fft2(ub)
     vc=np.fft.fft2(uc)
 
     #first half-step wrt vg d/dx term & diffraction term
-    vna1=DiffractionHalfStep(va,vga,cvph1,1.0,kxm,kym,k2xm,k2ym,dt)
+    vna1=DiffractionHalfStep(va,vga,cvph1,1.0,wpw0,kxm,kym,k2xm,k2ym,dt)
     una1=np.fft.ifft2(vna1)
 
-    vnb1=DiffractionHalfStep(vb,vgb,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt)
+    vnb1=DiffractionHalfStep(vb,vgb,cvph2,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
     unb1=np.fft.ifft2(vnb1)
 
-    vnc1=DiffractionHalfStep(vc,vgc,cvph3,w2w0,kxm,kym,k2xm,k2ym,dt)
+    vnc1=DiffractionHalfStep(vc,vgc,cvph3,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
     unc1=np.fft.ifft2(vnc1)
 
     #applying self-focusing term
@@ -113,13 +113,13 @@ def IntegrationStepTwoPump(f0,g0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,kxm
 
     #final half-step wrt vg d/dx term & diffraction term
     vna2=np.fft.fft2(una2);
-    va=DiffractionHalfStep(vna2,vga,cvph1,1.0,kxm,kym,k2xm,k2ym,dt)
+    va=DiffractionHalfStep(vna2,vga,cvph1,1.0,wpw0,kxm,kym,k2xm,k2ym,dt)
 
     vnb2=np.fft.fft2(unb2);
-    vb=DiffractionHalfStep(vnb2,vgb,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt)
+    vb=DiffractionHalfStep(vnb2,vgb,cvph2,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
 
     vnc2=np.fft.fft2(unc2);
-    vc=DiffractionHalfStep(vnc2,vgc,cvph3,w2w0,kxm,kym,k2xm,k2ym,dt)
+    vc=DiffractionHalfStep(vnc2,vgc,cvph3,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
 
     ua=np.fft.ifft2(va)
     ub=np.fft.ifft2(vb)
@@ -129,20 +129,20 @@ def IntegrationStepTwoPump(f0,g0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,kxm
 
 
 
-def IntegrationStepTwoPumpOneBeat(f0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2):
+def IntegrationStepTwoPumpOneBeat(f0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt,Es,coupling1,coupling2):
     # taking FFT from initial envelopes
     va=np.fft.fft2(ua)
     vb=np.fft.fft2(ub)
     vc=np.fft.fft2(uc)
 
     #first half-step wrt vg d/dx term & diffraction term
-    vna1=DiffractionHalfStep(va,vga,cvph1,1.0,kxm,kym,k2xm,k2ym,dt)
+    vna1=DiffractionHalfStep(va,vga,cvph1,1.0,wpw0,kxm,kym,k2xm,k2ym,dt)
     una1=np.fft.ifft2(vna1)
 
-    vnb1=DiffractionHalfStep(vb,vgb,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt)
+    vnb1=DiffractionHalfStep(vb,vgb,cvph2,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
     unb1=np.fft.ifft2(vnb1)
 
-    vnc1=DiffractionHalfStep(vc,vgc,cvph3,w2w0,kxm,kym,k2xm,k2ym,dt)
+    vnc1=DiffractionHalfStep(vc,vgc,cvph3,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
     unc1=np.fft.ifft2(vnc1)
 
     #applying self-focusing term
@@ -175,13 +175,13 @@ def IntegrationStepTwoPumpOneBeat(f0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0
 
     #final half-step wrt vg d/dx term & diffraction term
     vna2=np.fft.fft2(una2);
-    va=DiffractionHalfStep(vna2,vga,cvph1,1.0,kxm,kym,k2xm,k2ym,dt)
+    va=DiffractionHalfStep(vna2,vga,cvph1,1.0,wpw0,kxm,kym,k2xm,k2ym,dt)
 
     vnb2=np.fft.fft2(unb2);
-    vb=DiffractionHalfStep(vnb2,vgb,cvph2,w2w0,kxm,kym,k2xm,k2ym,dt)
+    vb=DiffractionHalfStep(vnb2,vgb,cvph2,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
 
     vnc2=np.fft.fft2(unc2);
-    vc=DiffractionHalfStep(vnc2,vgc,cvph3,w2w0,kxm,kym,k2xm,k2ym,dt)
+    vc=DiffractionHalfStep(vnc2,vgc,cvph3,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
 
     ua=np.fft.ifft2(va)
     ub=np.fft.ifft2(vb)
@@ -192,16 +192,16 @@ def IntegrationStepTwoPumpOneBeat(f0,ua,ub,uc,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w0
 
 #multi-pump integrator
 
-def IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings):
+def IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt,Es,couplings):
     # taking FFT from initial envelopes
     vvec=np.fft.fft2(uvec)
 
     #first half-step wrt vg d/dx term & diffraction term
     
-    vna1=DiffractionHalfStep(vvec[0],vgvec[0],cvvec[0],1.0,kxm,kym,k2xm,k2ym,dt)
+    vna1=DiffractionHalfStep(vvec[0],vgvec[0],cvvec[0],1.0,wpw0,kxm,kym,k2xm,k2ym,dt)
     una1=np.fft.ifft2(vna1)
 
-    vnb1=DiffractionHalfStepPump(vvec[1:],vgvec[1:],cvvec[1:],w2w0,kxm,kym,k2xm,k2ym,dt)
+    vnb1=DiffractionHalfStepPump(vvec[1:],vgvec[1:],cvvec[1:],w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
     unb1=np.fft.ifft2(vnb1)
 
     #applying self-focusing term
@@ -264,10 +264,10 @@ def IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,co
     #final half-step wrt vg d/dx term & diffraction term
     vvec=np.fft.fft2(unvec2)
 
-    vna1=DiffractionHalfStep(vvec[0],vgvec[0],cvvec[0],1.0,kxm,kym,k2xm,k2ym,dt)
+    vna1=DiffractionHalfStep(vvec[0],vgvec[0],cvvec[0],1.0,wpw0,kxm,kym,k2xm,k2ym,dt)
     una1=np.fft.ifft2(vna1)
 
-    vnb1=DiffractionHalfStepPump(vvec[1:],vgvec[1:],cvvec[1:],w2w0,kxm,kym,k2xm,k2ym,dt)
+    vnb1=DiffractionHalfStepPump(vvec[1:],vgvec[1:],cvvec[1:],w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
     unb1=np.fft.ifft2(vnb1)
 
     #collect list of envelopes to dump
@@ -280,16 +280,16 @@ def IntegrationStepMultiPump(f0,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,co
 
 #multi-pump multi-beat integrator
 
-def IntegrationStepMultiPumpMultiBeat(f0s,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2ym,dt,Es,couplings):
+def IntegrationStepMultiPumpMultiBeat(f0s,uvec,vgvec,cvvec,w2w0,wpw0,kxm,kym,k2xm,k2ym,dt,Es,couplings):
     # taking FFT from initial envelopes
     vvec=np.fft.fft2(uvec)
 
     #first half-step wrt vg d/dx term & diffraction term
 
-    vna1=DiffractionHalfStep(vvec[0],vgvec[0],cvvec[0],1.0,kxm,kym,k2xm,k2ym,dt)
+    vna1=DiffractionHalfStep(vvec[0],vgvec[0],cvvec[0],1.0,wpw0,kxm,kym,k2xm,k2ym,dt)
     una1=np.fft.ifft2(vna1)
 
-    vnb1=DiffractionHalfStepPump(vvec[1:],vgvec[1:],cvvec[1:],w2w0,kxm,kym,k2xm,k2ym,dt)
+    vnb1=DiffractionHalfStepPump(vvec[1:],vgvec[1:],cvvec[1:],w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
     unb1=np.fft.ifft2(vnb1)
 
     #applying self-focusing term
@@ -355,10 +355,10 @@ def IntegrationStepMultiPumpMultiBeat(f0s,uvec,vgvec,cvvec,w2w0,kxm,kym,k2xm,k2y
     #final half-step wrt vg d/dx term & diffraction term
     vvec=np.fft.fft2(unvec2)
     
-    vna1=DiffractionHalfStep(vvec[0],vgvec[0],cvvec[0],1.0,kxm,kym,k2xm,k2ym,dt)
+    vna1=DiffractionHalfStep(vvec[0],vgvec[0],cvvec[0],1.0,wpw0,kxm,kym,k2xm,k2ym,dt)
     una1=np.fft.ifft2(vna1)
     
-    vnb1=DiffractionHalfStepPump(vvec[1:],vgvec[1:],cvvec[1:],w2w0,kxm,kym,k2xm,k2ym,dt)
+    vnb1=DiffractionHalfStepPump(vvec[1:],vgvec[1:],cvvec[1:],w2w0,wpw0,kxm,kym,k2xm,k2ym,dt)
     unb1=np.fft.ifft2(vnb1)
     
     #collect list of envelopes to dump

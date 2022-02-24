@@ -42,8 +42,8 @@ def analytical_envelope(a0,width,gamma2c,z,t):
 
 
 def test_frs0():
-    from .init_frs0 import maindir,cpls,ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
-    path=driver.Simulation(maindir,cpls[0],ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings[0],Nt)
+    from .init_frs0 import maindir,cpls,ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
+    path=driver.Simulation(maindir,cpls[0],ua0,ub0,vga,vgb,cvph1,cvph2,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings[0],Nt)
     fllst=[]
     for root, dirs, files in os.walk(path):
         for file in files:
@@ -92,8 +92,8 @@ def test_frs0():
 
 #testing the same FRS conditions as before but for Multi-Pump solver
 def test_frs1():
-    from .init_frs1 import maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
-    path=driver.SimulationMultiPumpMultiBeat(maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt)
+    from .init_frs1 import maindir,cpls,uvec,vgvec,cvvec,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
+    path=driver.SimulationMultiPumpMultiBeat(maindir,cpls,uvec,vgvec,cvvec,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt)
     fllst=[]
     for root, dirs, files in os.walk(path):
         for file in files:
@@ -140,8 +140,8 @@ def test_frs1():
 
 #testing the Multi-Pump solver for two pump envelopes
 def test_frs2():
-    from .init_frs2 import maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
-    path=driver.SimulationMultiPump(maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt)
+    from .init_frs2 import maindir,cpls,uvec,vgvec,cvvec,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
+    path=driver.SimulationMultiPump(maindir,cpls,uvec,vgvec,cvvec,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt)
     fllst=[]
     for root, dirs, files in os.walk(path):
         for file in files:

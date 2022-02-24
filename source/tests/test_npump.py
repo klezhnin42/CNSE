@@ -18,8 +18,8 @@ ENERGY_CONSERVATION=3e-7
 #testing the same FRS conditions as before but for Multi-Pump solver
 def test_npump():
 
-    from .init_npump_tpump_cmp2 import maindir,cpls,ua0,ub0,uc0,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings1,couplings2,Nt
-    path=driver.SimulationTwoPump(maindir,cpls[0],ua0,ub0,uc0,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings1[0],couplings2[0],Nt)
+    from .init_npump_tpump_cmp2 import maindir,cpls,ua0,ub0,uc0,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings1,couplings2,Nt
+    path=driver.SimulationTwoPump(maindir,cpls[0],ua0,ub0,uc0,vga,vgb,vgc,cvph1,cvph2,cvph3,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings1[0],couplings2[0],Nt)
 
 
     # check energy conservation
@@ -30,8 +30,8 @@ def test_npump():
     assert np.abs((np.amax(entot)-np.amin(entot))/np.amin(entot)<ENERGY_CONSERVATION)
 
 
-    from .init_npump_tpump_cmp1 import maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
-    path=driver.SimulationMultiPumpMultiBeat(maindir,cpls,uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt)
+    from .init_npump_tpump_cmp1 import maindir,cpls,uvec,vgvec,cvvec,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt
+    path=driver.SimulationMultiPumpMultiBeat(maindir,cpls,uvec,vgvec,cvvec,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt)
 
     # check energy conservation
     en=np.abs(np.loadtxt(path+'/energy.txt'))

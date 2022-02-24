@@ -127,4 +127,6 @@ for vgi in vgbs:
     vgvec.append(vgi)
     cvvec.append(cvph2)
 
-datainputs=[[maindir,cpls[0],uvec,vgvec,cvvec,w2w1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt]]
+#we change wpw1 to 1 again to get rid of the GVD term to correctly test FRS
+wpw1 = 1.0
+datainputs=[[maindir,cpls[0],uvec,vgvec,cvvec,w2w1,wpw1,x,y,kxm,kym,k2xm,k2ym,dt,Es,couplings,Nt]]
