@@ -5,8 +5,7 @@ This is an implementation of a solver of multiple coupled nonlinear 2+1 Schrodin
 
 ## How to use:
 
-1. To use MPI version, one should use main_mpi.py, to use Pool parallelization - main.py. There, besides required libraries, we load all the information
-from initialization files (see init_*.py files), where we specify initial envelopes, their group velocities, frequencies, self-focusing and coupling constants. For instance, in main_mpi.py, we do `from init_scanwidth import *` to conduct a scan on pump laser pulse parameters, width and duration, for the fixed pump energy. Also, there are multiple interaction models that you should specify in the main.py or main_mpi.py files. These models are described in ~/source/driver.py. In short: `driver.Simulation` is used when you consider single seed-single pump simulation; `driver.SimulationTwoPump` is used when two pumps with independent beatings are considered; `driver.SimulationTwoPumpOneBeat` - when two pumps and a single beating (sum of beatings between seed and first pump and seed and second pump) are desired; `driver.SimulationMultiPumpMultiBeat` and `driver.SimulationMultiPump` - same as above but for an arbitrary number of pumps.
+1. To use the MPI version, one should use main_mpi.py, to use Pool parallelization - main.py. There, besides required libraries, we load all the information from initialization files (see init_*.py files), where we specify initial envelopes, their group velocities, frequencies, self-focusing, and coupling constants. For instance, in main_mpi.py, we do `from init_scanwidth import *` to conduct a scan on pump laser pulse parameters, width, and duration, for the fixed pump energy. Also, there are multiple interaction models that you should specify in the main.py or main_mpi.py files. These models are described in ~/source/driver.py. In short: `driver.Simulation` is used when you consider single seed-single pump simulation; `driver.SimulationTwoPump` is used when two pumps with independent beatings are considered; `driver.SimulationTwoPumpOneBeat` - when two pumps and a single beating (sum of beatings between seed and first pump and seed and second pump) are desired; `driver.SimulationMultiPumpMultiBeat` and `driver.SimulationMultiPump` - same as above but for an arbitrary number of pumps.
 
 
 2. MPI: here is an example of a Slurm submission script that works for Tiger cluster at Princeton University https://researchcomputing.princeton.edu/systems/tiger
@@ -65,9 +64,9 @@ echo $Output_DIR | python main.py
 date
 ```
 
-Note that in case of Pool, only one computational node should be used.
+Note that in the case of Pool, only one computational node should be used.
 
-4. The defaul output consists of (1) figures representing envelope and phase evolution and (2) .npy files with full envelope data, which are easily processed with Python.
+4. The default output consists of (1) figures representing envelope and phase evolution and (2) .npy files with full envelope data, which are easily processed with Python.
 
 ## Limitations and possible developments:
-As of now, the code is not vectorized; although there is an analytical expression for the transfer matrix for any number of pump pulses (nonlinear Schrodinger equations), I did not find a good way to construct transfer matrix for vectorized calculation.
+As of now, the code is not vectorized; although there is an analytical expression for the transfer matrix for any number of pump pulses (nonlinear Schrodinger equations), I did not find a good way to construct a transfer matrix for vectorized calculation.
